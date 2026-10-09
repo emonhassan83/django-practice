@@ -1,0 +1,42 @@
+# Python byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual Environment
+task_env/
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Django local database & logs
+db.sqlite3
+db.sqlite3-journal
+*.sqlite3
+*.log
+
+# Environment variables & secrets
+.env
+.env.*
+*.env
+
+# Django media & static files
+media/
+staticfiles/
+
+# IDE / Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+
+# Pytest / Coverage / Build artifacts
+.coverage
+htmlcov/
+.pytest_cache/
+*.egg-info/
+dist/
+build/
