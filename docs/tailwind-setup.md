@@ -16,6 +16,8 @@ django-practice/
 └── tasks/templates/        # Tailwind scans these files
 ```
 
+
+
 ## Step 1: Django static settings
 
 `task_management/settings.py`-e `django.contrib.staticfiles` `INSTALLED_APPS`-e thakte hobe, ar project-er `static` folder register korte hobe:
@@ -27,6 +29,8 @@ STATICFILES_DIRS = [
     BASE_DIR / 'static',
 ]
 ```
+
+
 
 ## Step 2: Tailwind install
 
@@ -66,6 +70,8 @@ Custom color/font `@theme`-e, ar reusable class `@layer components`-e `@apply` d
 }
 ```
 
+
+
 ## Step 4: npm scripts
 
 `package.json`:
@@ -76,6 +82,8 @@ Custom color/font `@theme`-e, ar reusable class `@layer components`-e `@apply` d
   "watch:css": "tailwindcss -i ./static/src/input.css -o ./static/css/output.css --watch"
 }
 ```
+
+
 
 ## Step 5: Template-e CSS load koro
 
@@ -108,9 +116,12 @@ npm run build:css
 python manage.py collectstatic
 ```
 
+
+
 ## Common problems
 
 - **Notun class kaj korche na**: `watch:css` cholche kina dekho, ba `npm run build:css` abar chalao. Template folder `@source`-e ache kina check koro.
 - **Dynamic class name** (jemon `"bg-" + color`) Tailwind dhorte pare na. Class name puro likho, jemon `bg-red-500`.
 - **Browser purono CSS dekhacche**: hard refresh koro (`Ctrl + Shift + R`).
-- **`output.css` hand-edit koro na**: proti build-e overwrite hoye jabe. Change `input.css`-e koro.
+- `output.css` **hand-edit koro na**: proti build-e overwrite hoye jabe. Change `input.css`-e koro.
+
