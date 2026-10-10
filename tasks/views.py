@@ -7,7 +7,7 @@ def home(request):
 
 
 def manager_dashboard(request):
-    return render(request, "dashboard/dashboard.html")
+    return render(request, "dashboard/manager_dashboard.html")
 
 
 def user_dashboard(request):
