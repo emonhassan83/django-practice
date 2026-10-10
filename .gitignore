@@ -22,9 +22,8 @@ db.sqlite3-journal
 .env.*
 *.env
 
-# Django media & static files
-media/
-staticfiles/
+# Node / Tailwind
+node_modules/
 
 # IDE / Editor files
 .vscode/

@@ -9,16 +9,16 @@
 {% block content %}
 <!-- Metric Cards -->
 <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-10">
-    <div class="p-5 rounded-xl bg-slate-800/60 border border-slate-800">
-        <p class="text-slate-400 text-xs font-semibold uppercase tracking-wider">My Assigned Tasks</p>
+    <div class="card">
+        <p class="card-label">My Assigned Tasks</p>
         <h2 class="text-3xl font-bold text-white mt-2">5</h2>
     </div>
-    <div class="p-5 rounded-xl bg-slate-800/60 border border-slate-800">
-        <p class="text-slate-400 text-xs font-semibold uppercase tracking-wider">In Progress</p>
+    <div class="card">
+        <p class="card-label">In Progress</p>
         <h2 class="text-3xl font-bold text-amber-400 mt-2">2</h2>
     </div>
-    <div class="p-5 rounded-xl bg-slate-800/60 border border-slate-800">
-        <p class="text-slate-400 text-xs font-semibold uppercase tracking-wider">Completed</p>
+    <div class="card">
+        <p class="card-label">Completed</p>
         <h2 class="text-3xl font-bold text-emerald-400 mt-2">3</h2>
     </div>
 </div>
@@ -43,14 +43,14 @@
                 <tr class="hover:bg-slate-800/30 transition">
                     <td class="px-6 py-4 font-medium text-white">Setup Authentication API</td>
                     <td class="px-6 py-4">Task Management Backend</td>
-                    <td class="px-6 py-4"><span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">Completed</span></td>
+                    <td class="px-6 py-4"><span class="badge bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">Completed</span></td>
                     <td class="px-6 py-4">Oct 10, 2026</td>
                     <td class="px-6 py-4"><button class="px-3 py-1 bg-slate-800 hover:bg-slate-700 rounded text-xs text-slate-300">View Details</button></td>
                 </tr>
                 <tr class="hover:bg-slate-800/30 transition">
                     <td class="px-6 py-4 font-medium text-white">Design Database Schema</td>
                     <td class="px-6 py-4">Task Management Backend</td>
-                    <td class="px-6 py-4"><span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-500/10 text-amber-400 border border-amber-500/20">In Progress</span></td>
+                    <td class="px-6 py-4"><span class="badge bg-amber-500/10 text-amber-400 border border-amber-500/20">In Progress</span></td>
                     <td class="px-6 py-4">Oct 12, 2026</td>
                     <td class="px-6 py-4"><button class="px-3 py-1 bg-indigo-600 hover:bg-indigo-500 rounded text-xs text-white">Mark Complete</button></td>
                 </tr>

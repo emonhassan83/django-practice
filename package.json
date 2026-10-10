@@ -1,0 +1,14 @@
+{
+  "name": "django-practice",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Tailwind CSS build for the Django task management project",
+  "scripts": {
+    "build:css": "tailwindcss -i ./static/src/input.css -o ./static/css/output.css --minify",
+    "watch:css": "tailwindcss -i ./static/src/input.css -o ./static/css/output.css --watch"
+  },
+  "devDependencies": {
+    "@tailwindcss/cli": "^4.3.3",
+    "tailwindcss": "^4.3.3"
+  }
+}

@@ -8,7 +8,7 @@
 
 {% block header_actions %}
 <div class="mt-4 md:mt-0 flex space-x-3">
-    <button class="px-4 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-sm font-medium transition shadow-lg shadow-indigo-600/20">
+    <button class="btn-primary">
         + Create New Task
     </button>
 </div>
@@ -17,23 +17,23 @@
 {% block content %}
 <!-- Metric Cards -->
 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
-    <div class="p-5 rounded-xl bg-slate-800/60 border border-slate-800">
-        <p class="text-slate-400 text-xs font-semibold uppercase tracking-wider">Total Tasks</p>
+    <div class="card">
+        <p class="card-label">Total Tasks</p>
         <h2 class="text-3xl font-bold text-white mt-2">24</h2>
         <span class="text-xs text-emerald-400 mt-1 inline-block">↑ 12% from last week</span>
     </div>
-    <div class="p-5 rounded-xl bg-slate-800/60 border border-slate-800">
-        <p class="text-slate-400 text-xs font-semibold uppercase tracking-wider">In Progress</p>
+    <div class="card">
+        <p class="card-label">In Progress</p>
         <h2 class="text-3xl font-bold text-amber-400 mt-2">10</h2>
         <span class="text-xs text-amber-400/80 mt-1 inline-block">5 high priority</span>
     </div>
-    <div class="p-5 rounded-xl bg-slate-800/60 border border-slate-800">
-        <p class="text-slate-400 text-xs font-semibold uppercase tracking-wider">Completed</p>
+    <div class="card">
+        <p class="card-label">Completed</p>
         <h2 class="text-3xl font-bold text-emerald-400 mt-2">11</h2>
         <span class="text-xs text-emerald-400 mt-1 inline-block">85% success rate</span>
     </div>
-    <div class="p-5 rounded-xl bg-slate-800/60 border border-slate-800">
-        <p class="text-slate-400 text-xs font-semibold uppercase tracking-wider">Pending Review</p>
+    <div class="card">
+        <p class="card-label">Pending Review</p>
         <h2 class="text-3xl font-bold text-cyan-400 mt-2">3</h2>
         <span class="text-xs text-slate-400 mt-1 inline-block">Requires manager sign-off</span>
     </div>
@@ -60,29 +60,29 @@
                 <tr class="hover:bg-slate-800/30 transition">
                     <td class="px-6 py-4 font-medium text-white">Design Database Schema</td>
                     <td class="px-6 py-4">Rahim Ahmed</td>
-                    <td class="px-6 py-4"><span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-red-500/10 text-red-400 border border-red-500/20">High</span></td>
-                    <td class="px-6 py-4"><span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-500/10 text-amber-400 border border-amber-500/20">In Progress</span></td>
+                    <td class="px-6 py-4"><span class="badge bg-red-500/10 text-red-400 border border-red-500/20">High</span></td>
+                    <td class="px-6 py-4"><span class="badge bg-amber-500/10 text-amber-400 border border-amber-500/20">In Progress</span></td>
                     <td class="px-6 py-4">Oct 12, 2026</td>
                 </tr>
                 <tr class="hover:bg-slate-800/30 transition">
                     <td class="px-6 py-4 font-medium text-white">Setup Authentication API</td>
                     <td class="px-6 py-4">Karim Hassan</td>
-                    <td class="px-6 py-4"><span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-500/10 text-amber-400 border border-amber-500/20">Medium</span></td>
-                    <td class="px-6 py-4"><span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">Completed</span></td>
+                    <td class="px-6 py-4"><span class="badge bg-amber-500/10 text-amber-400 border border-amber-500/20">Medium</span></td>
+                    <td class="px-6 py-4"><span class="badge bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">Completed</span></td>
                     <td class="px-6 py-4">Oct 10, 2026</td>
                 </tr>
                 <tr class="hover:bg-slate-800/30 transition">
                     <td class="px-6 py-4 font-medium text-white">Frontend Dashboard Integration</td>
                     <td class="px-6 py-4">Nadia Islam</td>
-                    <td class="px-6 py-4"><span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">Normal</span></td>
-                    <td class="px-6 py-4"><span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">Pending Review</span></td>
+                    <td class="px-6 py-4"><span class="badge bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">Normal</span></td>
+                    <td class="px-6 py-4"><span class="badge bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">Pending Review</span></td>
                     <td class="px-6 py-4">Oct 15, 2026</td>
                 </tr>
                 <tr class="hover:bg-slate-800/30 transition">
                     <td class="px-6 py-4 font-medium text-white">Unit Testing & Coverage Report</td>
                     <td class="px-6 py-4">Tanvir Rahman</td>
-                    <td class="px-6 py-4"><span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-slate-500/10 text-slate-400 border border-slate-500/20">Low</span></td>
-                    <td class="px-6 py-4"><span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-slate-500/10 text-slate-400 border border-slate-500/20">Not Started</span></td>
+                    <td class="px-6 py-4"><span class="badge bg-slate-500/10 text-slate-400 border border-slate-500/20">Low</span></td>
+                    <td class="px-6 py-4"><span class="badge bg-slate-500/10 text-slate-400 border border-slate-500/20">Not Started</span></td>
                     <td class="px-6 py-4">Oct 18, 2026</td>
                 </tr>
             </tbody>
