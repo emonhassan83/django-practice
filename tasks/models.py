@@ -1,10 +1,36 @@
 from django.db import models
 
 # Create your models here.
+class Employee(models.Model):
+    name = models.CharField(max_length=100)
+    email = models.EmailField(unique=True)
+    
+
 class Task(models.Model):
+    project = models.ForeignKey("Project", on_delete=models.CASCADE, default = 1)
+    assign_to = models.ManyToManyField(Employee)
     title = models.CharField(max_length=200)
     description = models.TextField()
     due_date = models.DateTimeField()
     is_completed = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+class TaskDetails(models.Model):
+    HIGH = "high"
+    MEDIUM = "medium"
+    LOW = "low"
+    PRIORITY_OPTIONS = (
+        (HIGH, "High"),
+        (MEDIUM, "Medium"),
+        (LOW, "Low"),
+    )
+    
+    assign_to = models.CharField(max_length=100)
+    priority = models.CharField(max_length=10, choices=PRIORITY_OPTIONS, default=MEDIUM)
+    task = models.OneToOneField(Task, on_delete=models.CASCADE)
+    
+class Project(models.Model):
+    name = models.CharField(max_length=100)
+    start_date = models.DateField()
+    end_date = models.DateField()
