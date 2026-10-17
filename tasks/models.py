@@ -8,7 +8,7 @@ class Employee(models.Model):
 
 class Task(models.Model):
     project = models.ForeignKey("Project", on_delete=models.CASCADE, default = 1)
-    assign_to = models.ManyToManyField(Employee)
+    assign_to = models.ManyToManyField(Employee, related_name="tasks")
     title = models.CharField(max_length=200)
     description = models.TextField()
     due_date = models.DateTimeField()
@@ -20,15 +20,17 @@ class TaskDetails(models.Model):
     HIGH = "high"
     MEDIUM = "medium"
     LOW = "low"
+    URGENT = "urgent"
     PRIORITY_OPTIONS = (
         (HIGH, "High"),
         (MEDIUM, "Medium"),
         (LOW, "Low"),
+        (URGENT, "Urgent"),
     )
     
     assign_to = models.CharField(max_length=100)
     priority = models.CharField(max_length=10, choices=PRIORITY_OPTIONS, default=MEDIUM)
-    task = models.OneToOneField(Task, on_delete=models.CASCADE)
+    task = models.OneToOneField(Task, on_delete=models.CASCADE, related_name="task_details")
     
 class Project(models.Model):
     name = models.CharField(max_length=100)
