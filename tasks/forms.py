@@ -15,7 +15,9 @@ class StyledFormMixin:
 
             # ManyToMany / MultipleChoiceField default widget is SelectMultiple.
             if isinstance(field, (forms.MultipleChoiceField, forms.ModelMultipleChoiceField)):
+                choices = field.choices
                 field.widget = forms.CheckboxSelectMultiple()
+                field.widget.choices = choices
 
             if isinstance(field.widget, forms.Textarea):
                 field.widget.attrs.update({
