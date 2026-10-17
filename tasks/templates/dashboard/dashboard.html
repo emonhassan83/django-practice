@@ -23,6 +23,7 @@
                 <a href="{% url 'home' %}" class="px-4 py-2 text-sm font-medium text-slate-300 hover:text-white transition">Home</a>
                 <a href="{% url 'manager_dashboard' %}" class="px-4 py-2 text-sm font-medium rounded-lg transition {% if request.resolver_match.url_name == 'manager_dashboard' %}bg-indigo-600 text-white{% else %}bg-slate-800 hover:bg-slate-700 text-slate-200{% endif %}">Manager Dashboard</a>
                 <a href="{% url 'user_dashboard' %}" class="px-4 py-2 text-sm font-medium rounded-lg transition {% if request.resolver_match.url_name == 'user_dashboard' %}bg-indigo-600 text-white{% else %}bg-slate-800 hover:bg-slate-700 text-slate-200{% endif %}">User Dashboard</a>
+                <a href="{% url 'task_form' %}" class="px-4 py-2 text-sm font-medium rounded-lg transition {% if request.resolver_match.url_name == 'task_form' %}bg-indigo-600 text-white{% else %}bg-slate-800 hover:bg-slate-700 text-slate-200{% endif %}">Create Task</a>
             </div>
         </div>
     </nav>

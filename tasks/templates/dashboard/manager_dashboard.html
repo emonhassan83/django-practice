@@ -8,9 +8,9 @@
 
 {% block header_actions %}
 <div class="mt-4 md:mt-0 flex space-x-3">
-    <button class="btn-primary">
+    <a href="{% url 'task_form' %}" class="btn-primary">
         + Create New Task
-    </button>
+    </a>
 </div>
 {% endblock %}
 
