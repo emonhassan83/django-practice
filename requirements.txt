@@ -3,3 +3,6 @@ Django==6.1.2
 psycopg2-binary==2.9.13
 sqlparse==0.6.0
 tzdata==2026.5
+python-decouple==3.8
+django-debug-toolbar==8.0.0
+Faker==40.43.0
