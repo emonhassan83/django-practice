@@ -71,7 +71,7 @@ class TaskModelForm(StyledFormMixin, forms.ModelForm):
 
     class Meta:
         model = Task
-        fields = ['title', 'description', 'due_date', 'assign_to']
+        fields = ['title', 'description', 'due_date', 'assign_to', 'status']
         # widgets = {
         #     'title': forms.TextInput(attrs={
         #         'class': 'form-control',

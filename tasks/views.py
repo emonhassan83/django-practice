@@ -1,5 +1,5 @@
 from django.db.models import Count, Q
-from django.shortcuts import render, redirect
+from django.shortcuts import get_object_or_404, render, redirect
 from tasks.forms import TaskDetailModelForm, TaskModelForm
 from tasks.models import Task, TaskDetails
 
@@ -72,5 +72,42 @@ def task_form(request):
     return render(
         request,
         "task_form.html",
-        {"form": form, "detail_form": detail_form},
+        {"form": form, "detail_form": detail_form, "is_edit": False},
     )
+
+def update_task(request, id):
+    task = get_object_or_404(Task, id=id)
+    task_details = TaskDetails.objects.filter(task=task).first()
+
+    form = TaskModelForm(instance=task)
+    detail_form = TaskDetailModelForm(instance=task_details)
+
+    if request.method == "POST":
+        form = TaskModelForm(request.POST, instance=task)
+        detail_form = TaskDetailModelForm(request.POST, instance=task_details)
+
+        if form.is_valid() and detail_form.is_valid():
+            task = form.save()
+            details = detail_form.save(commit=False)
+            details.task = task
+            assigned = task.assign_to.first()
+            details.assign_to = assigned.name if assigned else ""
+            details.save()
+            return redirect("manager_dashboard")
+
+    return render(
+        request,
+        "task_form.html",
+        {
+            "form": form,
+            "detail_form": detail_form,
+            "is_edit": True,
+            "task": task,
+        },
+    )
+
+def delete_task(request, id):
+    if request.method == "POST":
+        task = get_object_or_404(Task, id=id)
+        task.delete()
+    return redirect("manager_dashboard")

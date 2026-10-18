@@ -1,10 +1,10 @@
 {% extends "dashboard/dashboard.html" %}
 
-{% block title %}Create Task{% endblock %}
+{% block title %}{% if is_edit %}Update Task{% else %}Create Task{% endif %}{% endblock %}
 
-{% block heading %}Create New Task{% endblock %}
+{% block heading %}{% if is_edit %}Update Task{% else %}Create New Task{% endif %}{% endblock %}
 
-{% block subheading %}Assign work, set a due date, and add the task to your project.{% endblock %}
+{% block subheading %}{% if is_edit %}Edit this task and save your changes.{% else %}Assign work, set a due date, and add the task to your project.{% endif %}{% endblock %}
 
 {% block header_actions %}
 <div class="mt-4 md:mt-0">
@@ -48,6 +48,12 @@
         </div>
 
         <div class="flex flex-col">
+            <p class="form-label">{{ form.status.label }}</p>
+            <div class="form-checkboxes">{{ form.status }}</div>
+            {{ form.status.errors }}
+        </div>
+
+        <div class="flex flex-col">
             <p class="form-label">{{ detail_form.priority.label }}</p>
             <div class="form-checkboxes">{{ detail_form.priority }}</div>
             {{ detail_form.priority.errors }}
@@ -61,7 +67,7 @@
 
         <div class="flex items-center justify-end gap-3 pt-2 border-t border-slate-800">
             <a href="{% url 'manager_dashboard' %}" class="btn-secondary">Cancel</a>
-            <button type="submit" class="btn-primary">Create Task</button>
+            <button type="submit" class="btn-primary">{% if is_edit %}Save Changes{% else %}Create Task{% endif %}</button>
         </div>
     </form>
 </div>

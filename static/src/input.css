@@ -53,6 +53,7 @@
 
 .form-checkboxes #id_assign_to,
 .form-checkboxes #id_priority,
+.form-checkboxes #id_status,
 .form-checkboxes > ul {
   @apply grid sm:grid-cols-2 gap-2 mt-1;
 }
