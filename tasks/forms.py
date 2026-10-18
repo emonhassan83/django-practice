@@ -19,6 +19,14 @@ class StyledFormMixin:
                 field.widget = forms.CheckboxSelectMultiple()
                 field.widget.choices = choices
 
+            # Model CharField(choices=...) becomes a ChoiceField with Select by default.
+            elif isinstance(field, forms.ChoiceField) and not isinstance(
+                field, (forms.MultipleChoiceField, forms.ModelChoiceField, forms.ModelMultipleChoiceField)
+            ):
+                choices = field.choices
+                field.widget = forms.RadioSelect()
+                field.widget.choices = choices
+
             if isinstance(field.widget, forms.Textarea):
                 field.widget.attrs.update({
                     "class": self.default_classes,
@@ -28,7 +36,7 @@ class StyledFormMixin:
                 field.widget.attrs.update({
                     "class": "form-select",
                 })
-            elif isinstance(field.widget, forms.CheckboxSelectMultiple):
+            elif isinstance(field.widget, (forms.CheckboxSelectMultiple, forms.RadioSelect)):
                 field.widget.attrs.update({
                     "class": self.default_classes,
                 })
@@ -77,3 +85,14 @@ class TaskModelForm(StyledFormMixin, forms.ModelForm):
         #     'due_date': forms.SelectDateWidget(attrs={'class': 'form-select'}),
         #     'assign_to': forms.CheckboxSelectMultiple(),
         # }
+
+
+class TaskDetailModelForm(StyledFormMixin, forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.apply_styled_widgets()
+
+    class Meta:
+        model = TaskDetails
+        fields = ["priority", "note"]
+        # task is set in the view after the Task is saved
