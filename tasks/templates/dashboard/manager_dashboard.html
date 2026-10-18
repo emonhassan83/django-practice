@@ -19,23 +19,23 @@
 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
     <div class="card">
         <p class="card-label">Total Tasks</p>
-        <h2 class="text-3xl font-bold text-white mt-2">24</h2>
-        <span class="text-xs text-emerald-400 mt-1 inline-block">↑ 12% from last week</span>
+        <h2 class="text-3xl font-bold text-white mt-2">{{ total_tasks }}</h2>
+        <span class="text-xs text-slate-400 mt-1 inline-block">All tasks in the system</span>
     </div>
     <div class="card">
         <p class="card-label">In Progress</p>
-        <h2 class="text-3xl font-bold text-amber-400 mt-2">10</h2>
-        <span class="text-xs text-amber-400/80 mt-1 inline-block">5 high priority</span>
+        <h2 class="text-3xl font-bold text-amber-400 mt-2">{{ in_progress }}</h2>
+        <span class="text-xs text-amber-400/80 mt-1 inline-block">{{ high_priority_in_progress }} high priority</span>
     </div>
     <div class="card">
         <p class="card-label">Completed</p>
-        <h2 class="text-3xl font-bold text-emerald-400 mt-2">11</h2>
-        <span class="text-xs text-emerald-400 mt-1 inline-block">85% success rate</span>
+        <h2 class="text-3xl font-bold text-emerald-400 mt-2">{{ completed }}</h2>
+        <span class="text-xs text-emerald-400 mt-1 inline-block">{{ success_rate }}% success rate</span>
     </div>
     <div class="card">
-        <p class="card-label">Pending Review</p>
-        <h2 class="text-3xl font-bold text-cyan-400 mt-2">3</h2>
-        <span class="text-xs text-slate-400 mt-1 inline-block">Requires manager sign-off</span>
+        <p class="card-label">Pending</p>
+        <h2 class="text-3xl font-bold text-cyan-400 mt-2">{{ pending }}</h2>
+        <span class="text-xs text-slate-400 mt-1 inline-block">Not started yet</span>
     </div>
 </div>
 
@@ -43,7 +43,7 @@
 <div class="bg-slate-800/40 border border-slate-800 rounded-xl overflow-hidden">
     <div class="px-6 py-4 border-b border-slate-800 flex items-center justify-between">
         <h3 class="text-lg font-bold text-white">All Tasks Overview</h3>
-        <span class="text-xs text-slate-400">Showing recent 4 tasks</span>
+        <span class="text-xs text-slate-400">Showing {{ tasks|length }} task{{ tasks|length|pluralize }}</span>
     </div>
     <div class="overflow-x-auto">
         <table class="w-full text-left text-sm text-slate-300">
@@ -57,34 +57,45 @@
                 </tr>
             </thead>
             <tbody class="divide-y divide-slate-800">
+                {% for task in tasks %}
                 <tr class="hover:bg-slate-800/30 transition">
-                    <td class="px-6 py-4 font-medium text-white">Design Database Schema</td>
-                    <td class="px-6 py-4">Rahim Ahmed</td>
-                    <td class="px-6 py-4"><span class="badge bg-red-500/10 text-red-400 border border-red-500/20">High</span></td>
-                    <td class="px-6 py-4"><span class="badge bg-amber-500/10 text-amber-400 border border-amber-500/20">In Progress</span></td>
-                    <td class="px-6 py-4">Oct 12, 2026</td>
+                    <td class="px-6 py-4 font-medium text-white">{{ task.title }}</td>
+                    <td class="px-6 py-4">
+                        {% for employee in task.assign_to.all %}
+                            {{ employee.name }}{% if not forloop.last %}, {% endif %}
+                        {% empty %}
+                            <span class="text-slate-500">Unassigned</span>
+                        {% endfor %}
+                    </td>
+                    <td class="px-6 py-4">
+                        {% if task.task_details.priority == "high" or task.task_details.priority == "urgent" %}
+                            <span class="badge bg-red-500/10 text-red-400 border border-red-500/20">{{ task.task_details.get_priority_display }}</span>
+                        {% elif task.task_details.priority == "medium" %}
+                            <span class="badge bg-amber-500/10 text-amber-400 border border-amber-500/20">{{ task.task_details.get_priority_display }}</span>
+                        {% elif task.task_details.priority == "low" %}
+                            <span class="badge bg-slate-500/10 text-slate-400 border border-slate-500/20">{{ task.task_details.get_priority_display }}</span>
+                        {% else %}
+                            <span class="badge bg-slate-500/10 text-slate-400 border border-slate-500/20">—</span>
+                        {% endif %}
+                    </td>
+                    <td class="px-6 py-4">
+                        {% if task.status == "in_progress" %}
+                            <span class="badge bg-amber-500/10 text-amber-400 border border-amber-500/20">{{ task.get_status_display }}</span>
+                        {% elif task.status == "completed" %}
+                            <span class="badge bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">{{ task.get_status_display }}</span>
+                        {% else %}
+                            <span class="badge bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">{{ task.get_status_display }}</span>
+                        {% endif %}
+                    </td>
+                    <td class="px-6 py-4">{{ task.due_date|date:"M j, Y" }}</td>
                 </tr>
-                <tr class="hover:bg-slate-800/30 transition">
-                    <td class="px-6 py-4 font-medium text-white">Setup Authentication API</td>
-                    <td class="px-6 py-4">Karim Hassan</td>
-                    <td class="px-6 py-4"><span class="badge bg-amber-500/10 text-amber-400 border border-amber-500/20">Medium</span></td>
-                    <td class="px-6 py-4"><span class="badge bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">Completed</span></td>
-                    <td class="px-6 py-4">Oct 10, 2026</td>
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="px-6 py-10 text-center text-slate-500">
+                        No tasks yet. <a href="{% url 'task_form' %}" class="text-indigo-400 hover:text-indigo-300">Create one</a>
+                    </td>
                 </tr>
-                <tr class="hover:bg-slate-800/30 transition">
-                    <td class="px-6 py-4 font-medium text-white">Frontend Dashboard Integration</td>
-                    <td class="px-6 py-4">Nadia Islam</td>
-                    <td class="px-6 py-4"><span class="badge bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">Normal</span></td>
-                    <td class="px-6 py-4"><span class="badge bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">Pending Review</span></td>
-                    <td class="px-6 py-4">Oct 15, 2026</td>
-                </tr>
-                <tr class="hover:bg-slate-800/30 transition">
-                    <td class="px-6 py-4 font-medium text-white">Unit Testing & Coverage Report</td>
-                    <td class="px-6 py-4">Tanvir Rahman</td>
-                    <td class="px-6 py-4"><span class="badge bg-slate-500/10 text-slate-400 border border-slate-500/20">Low</span></td>
-                    <td class="px-6 py-4"><span class="badge bg-slate-500/10 text-slate-400 border border-slate-500/20">Not Started</span></td>
-                    <td class="px-6 py-4">Oct 18, 2026</td>
-                </tr>
+                {% endfor %}
             </tbody>
         </table>
     </div>
