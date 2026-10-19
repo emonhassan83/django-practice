@@ -3,13 +3,20 @@ from django.contrib.auth.models import User # Model Used by UserCreationForm and
 from django.contrib.auth.forms import UserCreationForm # Built-in Form for Registering a New User
 from .form import SignUpForm, CustomSignUpForm
 from django.contrib.auth import authenticate, login, logout
+from django.contrib import messages
 
 # Create your views here.
 def sign_up(request):
     if request.method == 'POST':
         form = CustomSignUpForm(request.POST)
         if form.is_valid():
-            form.save()
+            user = form.save(commit=False)
+            user.set_password(form.cleaned_data['password'])
+
+            user.is_active = False
+            user.save()
+
+            messages.success( request, f'We have sent an activation email to {user.email}. Click the link to activate your account.')
             return redirect('sign-in')
     else:
         form = CustomSignUpForm()
