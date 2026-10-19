@@ -19,11 +19,31 @@
                     TaskFlow
                 </span>
             </div>
-            <div class="flex items-center space-x-4">
-                <a href="{% url 'home' %}" class="px-4 py-2 text-sm font-medium text-slate-300 hover:text-white transition">Home</a>
-                <a href="{% url 'manager_dashboard' %}" class="px-4 py-2 text-sm font-medium rounded-lg transition {% if request.resolver_match.url_name == 'manager_dashboard' %}bg-indigo-600 text-white{% else %}bg-slate-800 hover:bg-slate-700 text-slate-200{% endif %}">Manager Dashboard</a>
-                <a href="{% url 'user_dashboard' %}" class="px-4 py-2 text-sm font-medium rounded-lg transition {% if request.resolver_match.url_name == 'user_dashboard' %}bg-indigo-600 text-white{% else %}bg-slate-800 hover:bg-slate-700 text-slate-200{% endif %}">User Dashboard</a>
-                <a href="{% url 'task_form' %}" class="px-4 py-2 text-sm font-medium rounded-lg transition {% if request.resolver_match.url_name == 'task_form' %}bg-indigo-600 text-white{% else %}bg-slate-800 hover:bg-slate-700 text-slate-200{% endif %}">Create Task</a>
+            <div class="flex items-center space-x-3 sm:space-x-4">
+                <a href="{% url 'home' %}" class="px-3 py-2 text-sm font-medium text-slate-300 hover:text-white transition">Home</a>
+                <a href="{% url 'manager_dashboard' %}" class="px-3 py-2 text-sm font-medium rounded-lg transition {% if request.resolver_match.url_name == 'manager_dashboard' %}bg-indigo-600 text-white{% else %}bg-slate-800 hover:bg-slate-700 text-slate-200{% endif %}">Manager Dashboard</a>
+                <a href="{% url 'user_dashboard' %}" class="px-3 py-2 text-sm font-medium rounded-lg transition {% if request.resolver_match.url_name == 'user_dashboard' %}bg-indigo-600 text-white{% else %}bg-slate-800 hover:bg-slate-700 text-slate-200{% endif %}">User Dashboard</a>
+                <a href="{% url 'task_form' %}" class="px-3 py-2 text-sm font-medium rounded-lg transition {% if request.resolver_match.url_name == 'task_form' %}bg-indigo-600 text-white{% else %}bg-slate-800 hover:bg-slate-700 text-slate-200{% endif %}">Create Task</a>
+
+                {% if user.is_authenticated %}
+                    <div class="flex items-center space-x-3 pl-3 border-l border-slate-800">
+                        <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-indigo-950/80 text-indigo-300 border border-indigo-800/40">
+                            <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+                            {{ user.username }}
+                        </span>
+                        <form action="{% url 'sign-out' %}" method="POST" class="inline">
+                            {% csrf_token %}
+                            <button type="submit" class="px-3.5 py-1.5 text-xs font-semibold rounded-lg bg-rose-600/90 hover:bg-rose-500 text-white transition shadow-sm">
+                                Logout
+                            </button>
+                        </form>
+                    </div>
+                {% else %}
+                    <div class="flex items-center space-x-2 pl-3 border-l border-slate-800">
+                        <a href="{% url 'sign-in' %}" class="px-3.5 py-1.5 text-sm font-medium text-slate-300 hover:text-white transition">Sign In</a>
+                        <a href="{% url 'sign-up' %}" class="px-3.5 py-1.5 text-sm font-medium bg-indigo-600 hover:bg-indigo-500 rounded-lg text-white transition shadow-lg shadow-indigo-600/20">Sign Up</a>
+                    </div>
+                {% endif %}
             </div>
         </div>
     </nav>

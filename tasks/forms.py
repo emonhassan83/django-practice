@@ -4,6 +4,10 @@ from tasks.models import Employee, TaskDetails, Task
 
 class StyledFormMixin:
     """Mixin to apply style to form fields."""
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.apply_styled_widgets()
+
     default_classes = "form-control"
 
     def apply_styled_widgets(self):
@@ -28,9 +32,10 @@ class StyledFormMixin:
                 field.widget.choices = choices
 
             if isinstance(field.widget, forms.Textarea):
+                label_text = (field.label or field_name).lower()
                 field.widget.attrs.update({
                     "class": self.default_classes,
-                    "placeholder": f"Enter {field.label.lower()} such as......",
+                    "placeholder": f"Enter {label_text} such as......",
                 })
             elif isinstance(field.widget, forms.SelectDateWidget):
                 field.widget.attrs.update({
@@ -40,10 +45,11 @@ class StyledFormMixin:
                 field.widget.attrs.update({
                     "class": self.default_classes,
                 })
-            elif isinstance(field.widget, forms.TextInput):
+            elif isinstance(field.widget, (forms.TextInput, forms.PasswordInput, forms.EmailInput)):
+                label_text = (field.label or field_name).lower()
                 field.widget.attrs.update({
                     "class": self.default_classes,
-                    "placeholder": f"Enter {field.label.lower()} such as......",
+                    "placeholder": f"Enter {label_text} such as......",
                 })
 
 
@@ -65,10 +71,6 @@ class TaskForm(forms.Form):
 
 # Django ModelForm for Task Creation
 class TaskModelForm(StyledFormMixin, forms.ModelForm):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.apply_styled_widgets()
-
     class Meta:
         model = Task
         fields = ['title', 'description', 'due_date', 'assign_to', 'status']
@@ -88,10 +90,6 @@ class TaskModelForm(StyledFormMixin, forms.ModelForm):
 
 
 class TaskDetailModelForm(StyledFormMixin, forms.ModelForm):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.apply_styled_widgets()
-
     class Meta:
         model = TaskDetails
         fields = ["priority", "note"]

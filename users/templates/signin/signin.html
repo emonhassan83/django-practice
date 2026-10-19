@@ -1,0 +1,65 @@
+{% extends "dashboard/dashboard.html" %}
+
+{% block title %}Sign In{% endblock %}
+
+{% block heading %}Sign In to TaskFlow{% endblock %}
+
+{% block subheading %}Enter your credentials to access your account and workspace.{% endblock %}
+
+{% block header_actions %}
+<div class="mt-4 md:mt-0">
+    <a href="{% url 'sign-up' %}" class="btn-secondary">Don't have an account? Sign Up</a>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="max-w-xl">
+    <form method="POST" class="card flex flex-col gap-6 p-6 md:p-8">
+        {% csrf_token %}
+
+        {% if error %}
+            <div class="rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-300">
+                {{ error }}
+            </div>
+        {% endif %}
+
+        {% if messages %}
+            {% for message in messages %}
+                <div class="rounded-lg border border-indigo-500/30 bg-indigo-500/10 px-4 py-3 text-sm text-indigo-300">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <div class="flex flex-col">
+            <label for="id_username" class="form-label">Username <span class="text-rose-400">*</span></label>
+            <input
+                type="text"
+                id="id_username"
+                name="username"
+                class="form-control"
+                placeholder="Enter username such as......"
+                required
+                autofocus
+            >
+        </div>
+
+        <div class="flex flex-col">
+            <label for="id_password" class="form-label">Password <span class="text-rose-400">*</span></label>
+            <input
+                type="password"
+                id="id_password"
+                name="password"
+                class="form-control"
+                placeholder="Enter password such as......"
+                required
+            >
+        </div>
+
+        <div class="flex items-center justify-end gap-3 pt-2 border-t border-slate-800">
+            <a href="{% url 'home' %}" class="btn-secondary">Cancel</a>
+            <button type="submit" class="btn-primary">Sign In</button>
+        </div>
+    </form>
+</div>
+{% endblock %}

@@ -3,9 +3,6 @@ from django.shortcuts import get_object_or_404, render, redirect
 from tasks.forms import TaskDetailModelForm, TaskModelForm
 from tasks.models import Task, TaskDetails
 
-def home(request):
-    return render(request, "home.html")
-
 def manager_dashboard(request, status=None):
     valid_statuses = {choice[0] for choice in Task.STATUS_CHOICES}
     if status and status not in valid_statuses:

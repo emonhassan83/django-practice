@@ -2,7 +2,6 @@ from django.urls import path, include
 from tasks.views import (
     manager_dashboard,
     user_dashboard,
-    home,
     task_form,
     update_task,
     delete_task,
