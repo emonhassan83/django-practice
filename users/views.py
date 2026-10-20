@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect, HttpResponse
 from django.contrib.auth import login, logout
+from django.contrib.auth.models import User
 from django.contrib import messages
 from users.form import CustomSignUpForm, SignInForm
 from django.contrib.auth.tokens import default_token_generator
@@ -55,4 +56,5 @@ def activate_user(request, user_id, token):
         return HttpResponse("User not found")
 
 def admin_dashboard(request):
-    return render(request, "admin/dashboard.html")
+    users = User.objects.prefetch_related("groups").order_by("id")
+    return render(request, "admin/dashboard.html", {"users": users})
