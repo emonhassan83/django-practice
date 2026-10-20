@@ -67,3 +67,25 @@ class AssignRoleForm(StyledFormMixin, forms.Form):
         empty_label="Select Role",
         widget=forms.Select(attrs={"class": "form-select w-full"}),
     )
+
+class CreateGroupForm(StyledFormMixin, forms.ModelForm):
+    permissions = forms.ModelMultipleChoiceField(
+        queryset=Permission.objects.select_related("content_type").order_by(
+            "content_type__app_label",
+            "content_type__model",
+            "codename",
+        ),
+        widget=forms.CheckboxSelectMultiple,
+        required=False,
+        label="Permissions",
+    )
+
+    class Meta:
+        model = Group
+        fields = ["name", "permissions"]
+        widgets = {
+            "name": forms.TextInput(attrs={
+                "class": "form-control",
+                "placeholder": "e.g. Manager, Editor",
+            }),
+        }

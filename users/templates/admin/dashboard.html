@@ -21,10 +21,10 @@
                 </a>
 
                 <div class="hidden md:flex items-center space-x-2">
-                    <a href="{% url 'admin-dashboard' %}" class="px-3 py-2 text-sm font-medium rounded-lg bg-indigo-600 text-white transition">Dashboard</a>
+                    <a href="{% url 'admin-dashboard' %}" class="px-3 py-2 text-sm font-medium rounded-lg {% if request.resolver_match.url_name == 'admin-dashboard' %}bg-indigo-600 text-white{% else %}text-slate-300 hover:text-white hover:bg-slate-800{% endif %} transition">Dashboard</a>
                     <a href="{% url 'manager_dashboard' %}" class="px-3 py-2 text-sm font-medium rounded-lg text-slate-300 hover:text-white hover:bg-slate-800 transition">Tasks</a>
-                    <a href="#" class="px-3 py-2 text-sm font-medium rounded-lg text-slate-300 hover:text-white hover:bg-slate-800 transition">Groups</a>
-                    <a href="#" class="px-3 py-2 text-sm font-medium rounded-lg text-slate-300 hover:text-white hover:bg-slate-800 transition">Create Group</a>
+                    <a href="{% url 'admin-dashboard' %}#groups-section" class="px-3 py-2 text-sm font-medium rounded-lg text-slate-300 hover:text-white hover:bg-slate-800 transition">Groups</a>
+                    <a href="{% url 'create-group' %}" class="px-3 py-2 text-sm font-medium rounded-lg {% if request.resolver_match.url_name == 'create-group' %}bg-indigo-600 text-white{% else %}text-slate-300 hover:text-white hover:bg-slate-800{% endif %} transition">Create Group</a>
                 </div>
 
                 <div class="flex items-center gap-3">
@@ -58,10 +58,10 @@
             </div>
 
             <div id="mobile-menu" class="md:hidden hidden mt-4 space-y-1 border-t border-slate-800 pt-4">
-                <a href="{% url 'admin-dashboard' %}" class="block px-3 py-2 rounded-lg text-sm font-medium bg-indigo-600 text-white">Dashboard</a>
+                <a href="{% url 'admin-dashboard' %}" class="block px-3 py-2 rounded-lg text-sm font-medium {% if request.resolver_match.url_name == 'admin-dashboard' %}bg-indigo-600 text-white{% else %}text-slate-300 hover:bg-slate-800 hover:text-white{% endif %}">Dashboard</a>
                 <a href="{% url 'manager_dashboard' %}" class="block px-3 py-2 rounded-lg text-sm font-medium text-slate-300 hover:bg-slate-800 hover:text-white">Tasks</a>
-                <a href="#" class="block px-3 py-2 rounded-lg text-sm font-medium text-slate-300 hover:bg-slate-800 hover:text-white">Groups</a>
-                <a href="#" class="block px-3 py-2 rounded-lg text-sm font-medium text-slate-300 hover:bg-slate-800 hover:text-white">Create Group</a>
+                <a href="{% url 'admin-dashboard' %}#groups-section" class="block px-3 py-2 rounded-lg text-sm font-medium text-slate-300 hover:bg-slate-800 hover:text-white">Groups</a>
+                <a href="{% url 'create-group' %}" class="block px-3 py-2 rounded-lg text-sm font-medium {% if request.resolver_match.url_name == 'create-group' %}bg-indigo-600 text-white{% else %}text-slate-300 hover:bg-slate-800 hover:text-white{% endif %}">Create Group</a>
             </div>
         </nav>
     </header>
@@ -74,7 +74,7 @@
                 <p class="text-slate-400 mt-1 text-sm">Manage users, groups, and system-wide task operations.</p>
             </div>
             <div class="mt-4 md:mt-0">
-                <a href="#" class="btn-primary">+ Create Group</a>
+                <a href="{% url 'create-group' %}" class="btn-primary">+ Create Group</a>
             </div>
         </div>
 
@@ -97,16 +97,59 @@
                 <h2 class="text-xl font-bold text-amber-400 mt-2">Manage Tasks</h2>
                 <span class="text-xs text-slate-400 mt-1 inline-block">Open task board</span>
             </a>
-            <a href="#" class="card block hover:border-indigo-500/40">
+            <a href="#groups-section" class="card block hover:border-indigo-500/40">
                 <p class="card-label">Groups</p>
-                <h2 class="text-xl font-bold text-cyan-400 mt-2">View Groups</h2>
-                <span class="text-xs text-slate-400 mt-1 inline-block">Browse all groups</span>
+                <h2 class="text-3xl font-bold text-cyan-400 mt-2">{{ groups|length }}</h2>
+                <span class="text-xs text-slate-400 mt-1 inline-block">Permission groups</span>
             </a>
-            <a href="#" class="card block hover:border-indigo-500/40">
+            <a href="{% url 'create-group' %}" class="card block hover:border-indigo-500/40">
                 <p class="card-label">Create Group</p>
                 <h2 class="text-xl font-bold text-emerald-400 mt-2">New Group</h2>
                 <span class="text-xs text-slate-400 mt-1 inline-block">Add a permission group</span>
             </a>
+        </div>
+
+        <div id="groups-section" class="bg-slate-800/40 border border-slate-800 rounded-xl overflow-hidden mb-10">
+            <div class="px-6 py-4 border-b border-slate-800 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                <div>
+                    <h3 class="text-lg font-bold text-white">Groups</h3>
+                    <p class="text-xs text-slate-400 mt-0.5">Showing {{ groups|length }} group{{ groups|length|pluralize }}</p>
+                </div>
+                <a href="{% url 'create-group' %}" class="btn-primary inline-flex items-center justify-center">+ Create Group</a>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-sm text-slate-300">
+                    <thead class="bg-slate-900/80 uppercase text-xs text-slate-400">
+                        <tr>
+                            <th class="px-6 py-3">#</th>
+                            <th class="px-6 py-3">Group Name</th>
+                            <th class="px-6 py-3">Permissions</th>
+                            <th class="px-6 py-3">Users</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-800">
+                        {% for group in groups %}
+                        <tr class="hover:bg-slate-800/30 transition">
+                            <td class="px-6 py-4 text-slate-400">{{ forloop.counter }}</td>
+                            <td class="px-6 py-4 font-medium text-white">{{ group.name }}</td>
+                            <td class="px-6 py-4">
+                                <span class="badge bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
+                                    {{ group.permissions.count }} permission{{ group.permissions.count|pluralize }}
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 text-slate-400">{{ group.user_set.count }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="4" class="px-6 py-10 text-center text-slate-500">
+                                No groups yet.
+                                <a href="{% url 'create-group' %}" class="text-indigo-400 hover:text-indigo-300">Create one</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
         </div>
 
         {% include "admin/user_list.html" %}

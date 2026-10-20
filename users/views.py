@@ -1,8 +1,8 @@
 from django.shortcuts import render, redirect, HttpResponse, get_object_or_404
 from django.contrib.auth import login, logout
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group
 from django.contrib import messages
-from users.form import CustomSignUpForm, SignInForm, AssignRoleForm
+from users.form import CustomSignUpForm, SignInForm, AssignRoleForm, CreateGroupForm
 from django.contrib.auth.tokens import default_token_generator
 
 
@@ -57,7 +57,12 @@ def activate_user(request, user_id, token):
 
 def admin_dashboard(request):
     users = User.objects.prefetch_related("groups").order_by("id")
-    return render(request, "admin/dashboard.html", {"users": users})
+    groups = Group.objects.prefetch_related("permissions", "user_set").order_by("name")
+    return render(
+        request,
+        "admin/dashboard.html",
+        {"users": users, "groups": groups},
+    )
 
 def assign_role(request, user_id):
     target_user = get_object_or_404(User, id=user_id)
@@ -78,3 +83,15 @@ def assign_role(request, user_id):
         "admin/assign_role.html",
         {"form": form, "target_user": target_user},
     )
+
+
+def create_group(request):
+    if request.method == "POST":
+        form = CreateGroupForm(request.POST)
+        if form.is_valid():
+            group = form.save()
+            messages.success(request, f'Group "{group.name}" created successfully')
+            return redirect("admin-dashboard")
+    else:
+        form = CreateGroupForm()
+    return render(request, "admin/create_group.html", {"form": form})
