@@ -1,5 +1,5 @@
 from django import forms
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Permission, Group
 from django.contrib.auth.forms import AuthenticationForm
 from tasks.forms import StyledFormMixin
 
@@ -60,3 +60,10 @@ class CustomSignUpForm(StyledFormMixin, forms.ModelForm):
 class SignInForm(StyledFormMixin, AuthenticationForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
+class AssignRoleForm(StyledFormMixin, forms.Form):
+    role = forms.ModelChoiceField(
+        queryset=Group.objects.all(),
+        empty_label="Select Role",
+        widget=forms.Select(attrs={"class": "form-select w-full"}),
+    )
