@@ -1,7 +1,8 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, HttpResponse
 from django.contrib.auth import login, logout
 from django.contrib import messages
 from users.form import CustomSignUpForm, SignInForm
+from django.contrib.auth.tokens import default_token_generator
 
 
 def sign_up(request):
@@ -39,3 +40,16 @@ def sign_out(request):
         logout(request)
         return redirect("home")
     return redirect("home")
+
+def activate_user(request, user_id, token):
+    try:
+        user = User.objects.get(id=user_id)
+        if default_token_generator.check_token(user, token):
+            user.is_active = True
+            user.save()
+            return redirect('sign-in')
+        else:
+            return HttpResponse("Invalid Id or token")
+
+    except User.DoseNotExist:
+        return HttpResponse("User not found")
