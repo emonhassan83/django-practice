@@ -1,43 +1,41 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth.models import User # Model Used by UserCreationForm and Our new RegistrationForm
-from django.contrib.auth.forms import UserCreationForm # Built-in Form for Registering a New User
-from .form import SignUpForm, CustomSignUpForm
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import login, logout
 from django.contrib import messages
+from users.form import CustomSignUpForm, SignInForm
 
-# Create your views here.
+
 def sign_up(request):
-    if request.method == 'POST':
+    if request.method == "POST":
         form = CustomSignUpForm(request.POST)
         if form.is_valid():
             user = form.save(commit=False)
-            user.set_password(form.cleaned_data['password'])
-
             user.is_active = False
             user.save()
-
-            messages.success( request, f'We have sent an activation email to {user.email}. Click the link to activate your account.')
-            return redirect('sign-in')
+            messages.success(
+                request,
+                f"We have sent an activation email to {user.email}. Click the link to activate your account.",
+            )
+            return redirect("sign-in")
     else:
         form = CustomSignUpForm()
 
-    return render(request, 'signup/signup.html', {'form': form})
+    return render(request, "signup/signup.html", {"form": form})
 
 
 def sign_in(request):
-    error = None
-    if request.method == 'POST':
-        username = request.POST.get('username')
-        password = request.POST.get('password')
-        user = authenticate(request, username=username, password=password)
-        if user is not None:
-            login(request, user)
-            return redirect('home')
-        else:
-            error = "Invalid username or password. Please try again."
+    if request.method == "POST":
+        form = SignInForm(request, data=request.POST)
+        if form.is_valid():
+            login(request, form.get_user())
+            return redirect("home")
+    else:
+        form = SignInForm(request)
 
-    return render(request, 'signin/signin.html', {'error': error})
+    return render(request, "signin/signin.html", {"form": form})
+
 
 def sign_out(request):
-    logout(request)
-    return redirect('home')
+    if request.method == "POST":
+        logout(request)
+        return redirect("home")
+    return redirect("home")

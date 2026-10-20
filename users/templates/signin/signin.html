@@ -17,9 +17,9 @@
     <form method="POST" class="card flex flex-col gap-6 p-6 md:p-8">
         {% csrf_token %}
 
-        {% if error %}
+        {% if form.non_field_errors %}
             <div class="rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-300">
-                {{ error }}
+                {{ form.non_field_errors }}
             </div>
         {% endif %}
 
@@ -31,30 +31,20 @@
             {% endfor %}
         {% endif %}
 
-        <div class="flex flex-col">
-            <label for="id_username" class="form-label">Username <span class="text-rose-400">*</span></label>
-            <input
-                type="text"
-                id="id_username"
-                name="username"
-                class="form-control"
-                placeholder="Enter username such as......"
-                required
-                autofocus
-            >
-        </div>
-
-        <div class="flex flex-col">
-            <label for="id_password" class="form-label">Password <span class="text-rose-400">*</span></label>
-            <input
-                type="password"
-                id="id_password"
-                name="password"
-                class="form-control"
-                placeholder="Enter password such as......"
-                required
-            >
-        </div>
+        {% for field in form %}
+            <div class="flex flex-col">
+                <label for="{{ field.id_for_label }}" class="form-label">
+                    {{ field.label }}
+                    {% if field.field.required %}<span class="text-rose-400">*</span>{% endif %}
+                </label>
+                {{ field }}
+                {% if field.errors %}
+                    <div class="text-xs text-red-400 mt-1">
+                        {{ field.errors }}
+                    </div>
+                {% endif %}
+            </div>
+        {% endfor %}
 
         <div class="flex items-center justify-end gap-3 pt-2 border-t border-slate-800">
             <a href="{% url 'home' %}" class="btn-secondary">Cancel</a>
