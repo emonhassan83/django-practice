@@ -53,3 +53,6 @@ def activate_user(request, user_id, token):
 
     except User.DoseNotExist:
         return HttpResponse("User not found")
+
+def admin_dashboard(request):
+    return render(request, "admin/dashboard.html")

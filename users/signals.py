@@ -21,3 +21,11 @@ def send_activation_email(sender, instance, created, **kwargs):
             )
         except Exception as e:
             print(f"Error sending activation email: {str(e)}")
+
+
+@receiver(post_save, sender=User)
+def assign_role(sender, instance, created, **kwargs):
+    if created:
+       user, created = Role.objects.get_or_create(name="User")
+       instance.groups.add(user)
+       instance.save()
