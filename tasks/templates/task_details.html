@@ -1,0 +1,302 @@
+{% extends "dashboard/dashboard.html" %}
+
+{% block title %}{{ task.title }} - Task Details{% endblock %}
+
+{% block page_header %}
+<div class="mb-8 pb-6 border-b border-slate-800 flex flex-col md:flex-row md:items-center md:justify-between gap-5">
+    <!-- Left: Eye Icon + Badges + Title -->
+    <div class="flex items-start sm:items-center gap-4">
+        <!-- Eye Icon Container -->
+        <div class="flex-shrink-0 flex items-center justify-center rounded-xl bg-cyan-500/10 border border-cyan-500/25 text-cyan-400 shadow-sm" style="width: 48px; height: 48px; min-width: 48px; min-height: 48px;">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 24px; height: 24px;">
+                <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/>
+                <circle cx="12" cy="12" r="3"/>
+            </svg>
+        </div>
+
+        <div>
+            <!-- Breadcrumb / Tags row -->
+            <div class="flex items-center gap-2 mb-1.5 flex-wrap">
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded text-xs font-semibold bg-slate-800 text-indigo-300 border border-slate-700 font-mono">#TASK-{{ task.id }}</span>
+                <span class="text-slate-600">•</span>
+                <span class="inline-flex items-center gap-1.5 text-xs font-medium text-slate-400">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 13px; height: 13px;">
+                        <path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 8 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/>
+                    </svg>
+                    {{ task.project.name }}
+                </span>
+            </div>
+
+            <!-- Main Title -->
+            <h1 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight leading-tight">
+                {{ task.title }}
+            </h1>
+
+            <p class="text-slate-400 mt-1 text-xs sm:text-sm">
+                Created on {{ task.created_at|date:"M j, Y, g:i a" }}{% if task.updated_at != task.created_at %} • Updated {{ task.updated_at|timesince }} ago{% endif %}
+            </p>
+        </div>
+    </div>
+
+    <!-- Right: Header Action Buttons -->
+    <div class="flex items-center gap-3 flex-wrap">
+        <a href="javascript:history.back()" class="inline-flex items-center gap-2 px-3.5 py-2 text-sm font-medium bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 rounded-lg transition shadow-sm">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 15px; height: 15px;">
+                <path d="m15 18-6-6 6-6"/>
+            </svg>
+            <span>Back</span>
+        </a>
+
+        {% if perms.tasks.change_task or is_admin or is_manager %}
+        <a href="{% url 'update_task' task.id %}" class="inline-flex items-center gap-2 px-3.5 py-2 text-sm font-medium bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg transition shadow-md shadow-indigo-600/20">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 15px; height: 15px;">
+                <path d="M12 20h9"/>
+                <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/>
+            </svg>
+            <span>Edit Task</span>
+        </a>
+        {% endif %}
+
+        {% if perms.tasks.delete_task or is_admin %}
+        <form method="post" action="{% url 'delete_task' task.id %}" onsubmit="return confirm('Are you sure you want to delete this task? This action cannot be undone.');" class="inline m-0 p-0">
+            {% csrf_token %}
+            <button type="submit" class="inline-flex items-center gap-2 px-3.5 py-2 text-sm font-medium bg-rose-600/90 hover:bg-rose-500 text-white rounded-lg transition shadow-md shadow-rose-600/20 cursor-pointer">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 15px; height: 15px;">
+                    <path d="M3 6h18"/>
+                    <path d="M8 6V4h8v2"/>
+                    <path d="M19 6l-1 14H6L5 6"/>
+                    <path d="M10 11v6"/>
+                    <path d="M14 11v6"/>
+                </svg>
+                <span>Delete</span>
+            </button>
+        </form>
+        {% endif %}
+    </div>
+</div>
+{% endblock page_header %}
+
+{% block content %}
+<!-- Quick Status & Metric Pill Row -->
+<div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
+    <!-- Status -->
+    <div class="card p-4">
+        <p class="card-label">Status</p>
+        <div class="mt-2">
+            {% if task.status == "completed" %}
+                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400" style="width: 8px; height: 8px;"></span>
+                    Completed
+                </span>
+            {% elif task.status == "in_progress" %}
+                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-amber-500/10 text-amber-400 border border-amber-500/20">
+                    <span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse" style="width: 8px; height: 8px;"></span>
+                    In Progress
+                </span>
+            {% else %}
+                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
+                    <span class="w-2 h-2 rounded-full bg-cyan-400" style="width: 8px; height: 8px;"></span>
+                    Pending
+                </span>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Priority -->
+    <div class="card p-4">
+        <p class="card-label">Priority</p>
+        <div class="mt-2">
+            {% if task.task_details.priority == "urgent" %}
+                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-rose-500/10 text-rose-400 border border-rose-500/20">
+                    <span class="w-2 h-2 rounded-full bg-rose-400 animate-ping" style="width: 8px; height: 8px;"></span>
+                    Urgent
+                </span>
+            {% elif task.task_details.priority == "high" %}
+                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-red-500/10 text-red-400 border border-red-500/20">
+                    High
+                </span>
+            {% elif task.task_details.priority == "medium" %}
+                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-amber-500/10 text-amber-400 border border-amber-500/20">
+                    Medium
+                </span>
+            {% else %}
+                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-slate-500/10 text-slate-400 border border-slate-500/20">
+                    {{ task.task_details.get_priority_display|default:"Low" }}
+                </span>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Due Date -->
+    <div class="card p-4">
+        <p class="card-label">Due Date</p>
+        <div class="flex items-center gap-2 mt-2 text-slate-100 font-semibold text-sm">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-indigo-400" style="width: 16px; height: 16px;">
+                <rect width="18" height="18" x="3" y="4" rx="2" ry="2"/>
+                <line x1="16" x2="16" y1="2" y2="6"/>
+                <line x1="8" x2="8" y1="2" y2="6"/>
+                <line x1="3" x2="21" y1="10" y2="10"/>
+            </svg>
+            <span>{{ task.due_date|date:"M j, Y" }}</span>
+        </div>
+    </div>
+
+    <!-- Project -->
+    <div class="card p-4">
+        <p class="card-label">Project</p>
+        <div class="flex items-center gap-2 mt-2 text-slate-100 font-semibold text-sm truncate" title="{{ task.project.name }}">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-cyan-400 flex-shrink-0" style="width: 16px; height: 16px;">
+                <path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 8 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/>
+            </svg>
+            <span class="truncate">{{ task.project.name }}</span>
+        </div>
+    </div>
+</div>
+
+<!-- Main Details Layout -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <!-- Left Column: Description & Project Details (2 spans) -->
+    <div class="lg:col-span-2 space-y-6">
+        <!-- Task Description -->
+        <div class="card p-6 md:p-8">
+            <div class="flex items-center gap-2.5 mb-4 pb-3 border-b border-slate-800">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-indigo-400" style="width: 18px; height: 18px;">
+                    <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/>
+                    <polyline points="14 2 14 8 20 8"/>
+                    <line x1="16" x2="8" y1="13" y2="13"/>
+                    <line x1="16" x2="8" y1="17" y2="17"/>
+                    <line x1="10" x2="8" y1="9" y2="9"/>
+                </svg>
+                <h3 class="text-lg font-bold text-white">Task Description</h3>
+            </div>
+            <div class="text-slate-300 leading-relaxed whitespace-pre-line text-sm sm:text-base">
+                {{ task.description|default:"No description provided for this task." }}
+            </div>
+        </div>
+
+        <!-- Task Internal Notes (if available) -->
+        {% if task.task_details.note %}
+        <div class="card p-6 md:p-8 border-indigo-900/40 bg-indigo-950/20">
+            <div class="flex items-center gap-2.5 mb-3 pb-3 border-b border-indigo-900/30">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-cyan-400" style="width: 18px; height: 18px;">
+                    <path d="M12 20h9"/>
+                    <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/>
+                </svg>
+                <h3 class="text-lg font-bold text-white">Task Notes & Guidelines</h3>
+            </div>
+            <p class="text-slate-300 text-sm leading-relaxed whitespace-pre-line">
+                {{ task.task_details.note }}
+            </p>
+        </div>
+        {% endif %}
+
+        <!-- Project Overview Card -->
+        <div class="card p-6 md:p-8">
+            <div class="flex items-center justify-between mb-4 pb-3 border-b border-slate-800">
+                <div class="flex items-center gap-2.5">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-cyan-400" style="width: 18px; height: 18px;">
+                        <path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 8 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/>
+                    </svg>
+                    <h3 class="text-lg font-bold text-white">Project Information</h3>
+                </div>
+                <span class="text-xs text-indigo-400 font-semibold">Active Project</span>
+            </div>
+
+            <div class="space-y-4">
+                <div>
+                    <h4 class="text-base font-semibold text-white">{{ task.project.name }}</h4>
+                    <p class="text-slate-400 text-sm mt-1">
+                        {{ task.project.description|default:"No project summary available." }}
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4 pt-3 border-t border-slate-800/80">
+                    <div>
+                        <span class="text-xs text-slate-500 uppercase tracking-wider block">Start Date</span>
+                        <span class="text-sm font-medium text-slate-200 mt-1 block">{{ task.project.start_date|date:"M j, Y" }}</span>
+                    </div>
+                    <div>
+                        <span class="text-xs text-slate-500 uppercase tracking-wider block">Target Delivery</span>
+                        <span class="text-sm font-medium text-slate-200 mt-1 block">{{ task.project.end_date|date:"M j, Y" }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Right Sidebar Column: Assignees & Metadata (1 span) -->
+    <div class="space-y-6">
+        <!-- Assigned Team Members -->
+        <div class="card p-6">
+            <div class="flex items-center justify-between mb-4 pb-3 border-b border-slate-800">
+                <div class="flex items-center gap-2">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-indigo-400" style="width: 18px; height: 18px;">
+                        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+                        <circle cx="9" cy="7" r="4"/>
+                        <path d="M22 21v-2a4 4 0 0 0-3-3.87"/>
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                    </svg>
+                    <h3 class="text-base font-bold text-white">Assigned Members</h3>
+                </div>
+                <span class="text-xs px-2 py-0.5 rounded-full bg-slate-800 text-slate-300 font-semibold">{{ task.assign_to.all|length }}</span>
+            </div>
+
+            <div class="space-y-3">
+                {% for employee in task.assign_to.all %}
+                <div class="flex items-center gap-3 p-2.5 rounded-lg bg-slate-900/60 border border-slate-800 hover:border-slate-700 transition">
+                    <div class="h-9 w-9 rounded-full bg-gradient-to-br from-indigo-500 to-cyan-500 text-white font-bold text-xs flex items-center justify-center shadow-sm" style="width: 36px; height: 36px; min-width: 36px;">
+                        {{ employee.name|first|upper }}
+                    </div>
+                    <div class="min-w-0 flex-1">
+                        <p class="text-sm font-semibold text-white truncate">{{ employee.name }}</p>
+                        <p class="text-xs text-slate-400 truncate">{{ employee.email }}</p>
+                    </div>
+                </div>
+                {% empty %}
+                    {% if task.task_details.assign_to %}
+                    <div class="p-3 rounded-lg bg-slate-900/60 border border-slate-800 text-sm text-slate-300">
+                        <span class="text-xs text-slate-500 block mb-1">Lead Assignee</span>
+                        {{ task.task_details.assign_to }}
+                    </div>
+                    {% else %}
+                    <p class="text-sm text-slate-500 py-3 text-center">No employee assigned yet.</p>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Task Metadata & Audit -->
+        <div class="card p-6">
+            <h3 class="text-base font-bold text-white mb-4 pb-3 border-b border-slate-800">
+                Task Information
+            </h3>
+
+            <dl class="space-y-3 text-sm">
+                <div class="flex justify-between items-center">
+                    <dt class="text-slate-400">Task Reference</dt>
+                    <dd class="text-white font-mono text-xs bg-slate-900 px-2 py-1 rounded border border-slate-800">#{{ task.id }}</dd>
+                </div>
+                <div class="flex justify-between items-center">
+                    <dt class="text-slate-400">Completion Status</dt>
+                    <dd class="text-slate-200">
+                        {% if task.is_completed %}
+                            <span class="text-emerald-400 font-medium">✓ Finished</span>
+                        {% else %}
+                            <span class="text-amber-400 font-medium">⏳ Active</span>
+                        {% endif %}
+                    </dd>
+                </div>
+                <div class="flex justify-between items-center">
+                    <dt class="text-slate-400">Created Date</dt>
+                    <dd class="text-slate-300">{{ task.created_at|date:"M j, Y" }}</dd>
+                </div>
+                <div class="flex justify-between items-center">
+                    <dt class="text-slate-400">Last Modified</dt>
+                    <dd class="text-slate-300">{{ task.updated_at|date:"M j, Y" }}</dd>
+                </div>
+            </dl>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

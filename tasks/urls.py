@@ -5,6 +5,7 @@ from tasks.views import (
     task_form,
     update_task,
     delete_task,
+    task_details,
 )
 
 urlpatterns = [
@@ -17,5 +18,6 @@ urlpatterns = [
     path("user-dashboard/", user_dashboard, name="user_dashboard"),
     path("task-form/", task_form, name="task_form"),
     path("update-task/<int:id>/", update_task, name="update_task"),
-    path("delete-task/<int:id>/", delete_task, name="delete_task")
+    path("delete-task/<int:id>/", delete_task, name="delete_task"),
+    path("task-details/<int:id>/", task_details, name="task_details"),
 ]

@@ -58,7 +58,22 @@ def manager_dashboard(request, status=None):
 
 @user_passes_test(is_employee, login_url="no-permission")
 def user_dashboard(request):
-    return render(request, "dashboard/user_dashboard.html")
+    tasks = (
+        Task.objects.select_related("project", "task_details")
+        .prefetch_related("assign_to")
+        .order_by("-created_at")
+    )
+    total_tasks = tasks.count()
+    in_progress = tasks.filter(status=Task.IN_PROGRESS).count()
+    completed = tasks.filter(status=Task.COMPLETED).count()
+
+    context = {
+        "tasks": tasks,
+        "total_tasks": total_tasks,
+        "in_progress": in_progress,
+        "completed": completed,
+    }
+    return render(request, "dashboard/user_dashboard.html", context)
 
 @login_required
 @permission_required('tasks.add_task', login_url="no-permission")
@@ -127,3 +142,12 @@ def delete_task(request, id):
         task = get_object_or_404(Task, id=id)
         task.delete()
     return redirect("manager_dashboard")
+
+@login_required
+@permission_required('tasks.view_task', login_url="no-permission")
+def task_details(request, id):
+    task = get_object_or_404(
+        Task.objects.select_related("project", "task_details").prefetch_related("assign_to"),
+        id=id,
+    )
+    return render(request, "task_details.html", {"task": task})
