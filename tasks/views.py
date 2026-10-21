@@ -2,7 +2,19 @@ from django.db.models import Count, Q
 from django.shortcuts import get_object_or_404, render, redirect
 from tasks.forms import TaskDetailModelForm, TaskModelForm
 from tasks.models import Task, TaskDetails
+from django.contrib.auth.decorators import user_passes_test, login_required, permission_required
 
+def is_manager(user):
+    return user.is_authenticated and (user.is_superuser or user.groups.filter(name__in=['Manager', 'Admin']).exists())
+
+def is_employee(user):
+    return user.is_authenticated and (
+        user.groups.filter(name__in=['Employee', 'User']).exists()
+        or user.is_superuser
+        or user.groups.filter(name__in=['Manager', 'Admin']).exists()
+    )
+
+@user_passes_test(is_manager, login_url="no-permission")
 def manager_dashboard(request, status=None):
     valid_statuses = {choice[0] for choice in Task.STATUS_CHOICES}
     if status and status not in valid_statuses:
@@ -44,9 +56,12 @@ def manager_dashboard(request, status=None):
     }
     return render(request, "dashboard/manager_dashboard.html", context)
 
+@user_passes_test(is_employee, login_url="no-permission")
 def user_dashboard(request):
     return render(request, "dashboard/user_dashboard.html")
 
+@login_required
+@permission_required('tasks.add_task', login_url="no-permission")
 def task_form(request):
     form = TaskModelForm()
     detail_form = TaskDetailModelForm()
@@ -72,6 +87,8 @@ def task_form(request):
         {"form": form, "detail_form": detail_form, "is_edit": False},
     )
 
+@login_required
+@permission_required('tasks.change_task', login_url="no-permission")
 def update_task(request, id):
     task = get_object_or_404(Task, id=id)
     task_details = TaskDetails.objects.filter(task=task).first()
@@ -103,6 +120,8 @@ def update_task(request, id):
         },
     )
 
+@login_required
+@permission_required('tasks.delete_task', login_url="no-permission")
 def delete_task(request, id):
     if request.method == "POST":
         task = get_object_or_404(Task, id=id)

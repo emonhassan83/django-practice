@@ -39,3 +39,27 @@ body {
         transform: translateY(0);
     }
 }
+
+/* Essential utilities to ensure reliable display toggling */
+.hidden {
+    display: none !important;
+}
+
+@media (max-width: 767px) {
+    .hidden-mobile {
+        display: none !important;
+    }
+}
+
+@media (min-width: 768px) {
+    .md\:hidden {
+        display: none !important;
+    }
+    .md\:flex {
+        display: flex !important;
+    }
+    .md\:block {
+        display: block !important;
+    }
+}
+

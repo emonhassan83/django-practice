@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Access Denied | Task Management</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #0f0c29;
+            background: linear-gradient(135deg, #0f0c29 0%, #1a1a4e 40%, #24243e 100%);
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Animated background blobs */
+        .blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.15;
+            animation: float 8s ease-in-out infinite;
+        }
+
+        .blob-1 {
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, #e94560, #7b2ff7);
+            top: -150px;
+            left: -150px;
+            animation-delay: 0s;
+        }
+
+        .blob-2 {
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, #7b2ff7, #00b4d8);
+            bottom: -100px;
+            right: -100px;
+            animation-delay: 3s;
+        }
+
+        .blob-3 {
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, #00b4d8, #e94560);
+            bottom: 100px;
+            left: 100px;
+            animation-delay: 6s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            33%       { transform: translate(30px, -30px) scale(1.05); }
+            66%       { transform: translate(-20px, 20px) scale(0.95); }
+        }
+
+        /* Grid lines overlay */
+        .grid-overlay {
+            position: absolute;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+            background-size: 60px 60px;
+        }
+
+        /* Main card */
+        .card {
+            position: relative;
+            z-index: 10;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 28px;
+            padding: 60px 56px;
+            max-width: 520px;
+            width: 90%;
+            text-align: center;
+            box-shadow:
+                0 32px 80px rgba(0, 0, 0, 0.5),
+                inset 0 1px 0 rgba(255,255,255,0.15);
+            animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(40px) scale(0.96); }
+            to   { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        /* Lock icon */
+        .lock-wrapper {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, rgba(233, 69, 96, 0.2), rgba(123, 47, 247, 0.2));
+            border: 2px solid rgba(233, 69, 96, 0.4);
+            margin-bottom: 28px;
+            animation: pulse 2.5s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(233, 69, 96, 0.25); }
+            50%       { box-shadow: 0 0 0 20px rgba(233, 69, 96, 0); }
+        }
+
+        .lock-icon {
+            font-size: 42px;
+            animation: shake 4s ease-in-out infinite;
+        }
+
+        @keyframes shake {
+            0%, 90%, 100% { transform: rotate(0deg); }
+            92%            { transform: rotate(-8deg); }
+            94%            { transform: rotate(8deg); }
+            96%            { transform: rotate(-4deg); }
+            98%            { transform: rotate(4deg); }
+        }
+
+        /* Error code badge */
+        .error-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #e94560, #7b2ff7);
+            color: #fff;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 2.5px;
+            text-transform: uppercase;
+            padding: 5px 16px;
+            border-radius: 999px;
+            margin-bottom: 18px;
+        }
+
+        h1 {
+            font-size: 32px;
+            font-weight: 800;
+            color: #ffffff;
+            margin-bottom: 14px;
+            line-height: 1.2;
+            letter-spacing: -0.5px;
+        }
+
+        h1 span {
+            background: linear-gradient(90deg, #e94560, #7b2ff7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .description {
+            font-size: 15px;
+            color: rgba(255, 255, 255, 0.55);
+            line-height: 1.7;
+            margin-bottom: 36px;
+        }
+
+        /* Action buttons */
+        .btn-group {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 13px 28px;
+            border-radius: 12px;
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            text-decoration: none;
+            cursor: pointer;
+            border: none;
+            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #e94560, #7b2ff7);
+            color: #fff;
+            box-shadow: 0 8px 24px rgba(233, 69, 96, 0.35);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 14px 32px rgba(233, 69, 96, 0.5);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.08);
+            color: rgba(255, 255, 255, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.14);
+            color: #fff;
+            transform: translateY(-2px);
+        }
+
+        /* Divider */
+        .divider {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin: 32px 0;
+        }
+
+        .divider-line {
+            flex: 1;
+            height: 1px;
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .divider-text {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.3);
+            font-weight: 500;
+            letter-spacing: 1px;
+        }
+
+        /* Info box */
+        .info-box {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            padding: 16px 20px;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            text-align: left;
+        }
+
+        .info-icon {
+            font-size: 18px;
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+
+        .info-text {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.45);
+            line-height: 1.6;
+        }
+
+        .info-text strong {
+            color: rgba(255, 255, 255, 0.7);
+            display: block;
+            margin-bottom: 2px;
+            font-size: 13px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+    <div class="grid-overlay"></div>
+
+    <div class="card">
+        <div class="lock-wrapper">
+            <span class="lock-icon">🔒</span>
+        </div>
+
+        <div class="error-badge">403 · Access Forbidden</div>
+
+        <h1>You Don't Have<br><span>Permission</span></h1>
+
+        <p class="description">
+            You don't have the required role or permissions to access this page.
+            Please contact your administrator if you believe this is a mistake.
+        </p>
+
+        <div class="btn-group">
+            <a href="/" class="btn btn-primary">
+                🏠 Go to Home
+            </a>
+            <a href="javascript:history.back()" class="btn btn-secondary">
+                ← Go Back
+            </a>
+        </div>
+
+        <div class="divider">
+            <div class="divider-line"></div>
+            <span class="divider-text">WHY AM I HERE?</span>
+            <div class="divider-line"></div>
+        </div>
+
+        <div class="info-box">
+            <span class="info-icon">💡</span>
+            <div class="info-text">
+                <strong>Possible Reasons</strong>
+                Your account may not be assigned to the required group (Manager / Employee), or you are not logged in with the correct account.
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

@@ -10,61 +10,43 @@
     <link rel="stylesheet" href="{% static 'css/index.css' %}">
 </head>
 <body class="bg-slate-900 text-slate-100 min-h-screen font-sans">
-    <header class="border-b border-slate-800 bg-slate-950/70 backdrop-blur sticky top-0 z-50">
-        <nav class="max-w-7xl mx-auto px-6 py-4">
-            <div class="flex items-center justify-between">
-                <a href="{% url 'home' %}" class="flex items-center space-x-3">
-                    <img src="{% static 'images/logo.svg' %}" alt="TaskFlow logo" class="h-9 w-9 rounded-xl shadow-lg shadow-brand-500/30">
+    <!-- Navbar -->
+    <nav class="border-b border-slate-800 bg-slate-950/70 backdrop-blur sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex flex-wrap items-center justify-between gap-4">
+            <div class="flex items-center space-x-3">
+                <a href="{% url 'home' %}" class="flex items-center space-x-3 group">
+                    <img src="{% static 'images/logo.svg' %}" alt="TaskFlow logo" class="h-9 w-9 rounded-xl shadow-lg shadow-brand-500/30 group-hover:scale-105 transition">
                     <span class="text-xl font-bold bg-gradient-to-r from-indigo-400 to-cyan-400 bg-clip-text text-transparent">
                         TaskFlow
                     </span>
                 </a>
+                <span class="px-2 py-0.5 rounded text-[11px] font-semibold bg-purple-500/10 text-purple-300 border border-purple-500/20">Admin</span>
+            </div>
 
-                <div class="hidden md:flex items-center space-x-2">
-                    <a href="{% url 'admin-dashboard' %}" class="px-3 py-2 text-sm font-medium rounded-lg {% if request.resolver_match.url_name == 'admin-dashboard' %}bg-indigo-600 text-white{% else %}text-slate-300 hover:text-white hover:bg-slate-800{% endif %} transition">Dashboard</a>
-                    <a href="{% url 'manager_dashboard' %}" class="px-3 py-2 text-sm font-medium rounded-lg text-slate-300 hover:text-white hover:bg-slate-800 transition">Tasks</a>
-                    <a href="{% url 'admin-dashboard' %}#groups-section" class="px-3 py-2 text-sm font-medium rounded-lg text-slate-300 hover:text-white hover:bg-slate-800 transition">Groups</a>
-                    <a href="{% url 'create-group' %}" class="px-3 py-2 text-sm font-medium rounded-lg {% if request.resolver_match.url_name == 'create-group' %}bg-indigo-600 text-white{% else %}text-slate-300 hover:text-white hover:bg-slate-800{% endif %} transition">Create Group</a>
-                </div>
+            <!-- Navigation Links -->
+            <div class="flex items-center flex-wrap gap-2 sm:gap-3">
+                <a href="{% url 'home' %}" class="px-3 py-2 text-sm font-medium text-slate-300 hover:text-white transition">Home</a>
+                <a href="{% url 'admin-dashboard' %}" class="px-3 py-2 text-sm font-medium rounded-lg transition {% if request.resolver_match.url_name == 'admin-dashboard' %}bg-indigo-600 text-white shadow-md shadow-indigo-600/30{% else %}bg-slate-800 hover:bg-slate-700 text-slate-200{% endif %}">Dashboard</a>
+                <a href="{% url 'manager_dashboard' %}" class="px-3 py-2 text-sm font-medium rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 transition">Tasks</a>
+                <a href="{% url 'admin-dashboard' %}#groups-section" class="px-3 py-2 text-sm font-medium rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 transition">Groups</a>
+                <a href="{% url 'create-group' %}" class="px-3 py-2 text-sm font-medium rounded-lg transition {% if request.resolver_match.url_name == 'create-group' %}bg-indigo-600 text-white shadow-md shadow-indigo-600/30{% else %}bg-slate-800 hover:bg-slate-700 text-slate-200{% endif %}">+ Create Group</a>
 
-                <div class="flex items-center gap-3">
-                    <div class="relative">
-                        <button id="user-menu-button" type="button" class="flex items-center gap-2 rounded-lg border border-slate-700 bg-slate-900/70 px-2.5 py-1.5 hover:border-indigo-500/50 transition focus:outline-none" aria-expanded="false" aria-haspopup="true">
-                            <span class="inline-flex h-8 w-8 items-center justify-center rounded-full bg-indigo-600 text-sm font-semibold text-white">
-                                {{ user.username|default:"A"|first|upper }}
-                            </span>
-                            <span class="hidden sm:inline text-sm text-slate-300">{{ user.username|default:"Admin" }}</span>
-                            <svg class="h-4 w-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                            </svg>
+                <!-- User & Logout -->
+                <div class="flex items-center space-x-3 pl-2 sm:pl-3 border-l border-slate-800">
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-indigo-950/80 text-indigo-300 border border-indigo-800/40">
+                        <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+                        {{ user.username }}
+                    </span>
+                    <form action="{% url 'sign-out' %}" method="POST" class="inline">
+                        {% csrf_token %}
+                        <button type="submit" class="px-3.5 py-1.5 text-xs font-semibold rounded-lg bg-rose-600/90 hover:bg-rose-500 text-white transition shadow-sm cursor-pointer">
+                            Logout
                         </button>
-                        <div id="user-menu" class="absolute right-0 mt-2 w-48 rounded-xl border border-slate-700 bg-slate-900 shadow-xl py-1 hidden z-50">
-                            <a href="{% url 'manager_dashboard' %}" class="block px-4 py-2.5 text-sm text-slate-300 hover:bg-slate-800 hover:text-white transition">Dashboard</a>
-                            <form method="post" action="{% url 'sign-out' %}">
-                                {% csrf_token %}
-                                <button type="submit" class="w-full text-left px-4 py-2.5 text-sm text-rose-400 hover:bg-slate-800 transition">
-                                    Logout
-                                </button>
-                            </form>
-                        </div>
-                    </div>
-
-                    <button id="menu-toggle" type="button" class="md:hidden inline-flex h-9 w-9 items-center justify-center rounded-lg border border-slate-700 text-slate-300 hover:text-white hover:border-slate-500 transition" aria-label="Toggle menu">
-                        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
-                        </svg>
-                    </button>
+                    </form>
                 </div>
             </div>
-
-            <div id="mobile-menu" class="md:hidden hidden mt-4 space-y-1 border-t border-slate-800 pt-4">
-                <a href="{% url 'admin-dashboard' %}" class="block px-3 py-2 rounded-lg text-sm font-medium {% if request.resolver_match.url_name == 'admin-dashboard' %}bg-indigo-600 text-white{% else %}text-slate-300 hover:bg-slate-800 hover:text-white{% endif %}">Dashboard</a>
-                <a href="{% url 'manager_dashboard' %}" class="block px-3 py-2 rounded-lg text-sm font-medium text-slate-300 hover:bg-slate-800 hover:text-white">Tasks</a>
-                <a href="{% url 'admin-dashboard' %}#groups-section" class="block px-3 py-2 rounded-lg text-sm font-medium text-slate-300 hover:bg-slate-800 hover:text-white">Groups</a>
-                <a href="{% url 'create-group' %}" class="block px-3 py-2 rounded-lg text-sm font-medium {% if request.resolver_match.url_name == 'create-group' %}bg-indigo-600 text-white{% else %}text-slate-300 hover:bg-slate-800 hover:text-white{% endif %}">Create Group</a>
-            </div>
-        </nav>
-    </header>
+        </div>
+    </nav>
 
     <main class="max-w-7xl mx-auto px-6 py-10">
         {% block content %}
@@ -160,19 +142,6 @@
         Task Management System &copy; {% now "Y" %} - All Rights Reserved.
     </footer>
 
-    <script>
-        document.getElementById("menu-toggle").addEventListener("click", function () {
-            document.getElementById("mobile-menu").classList.toggle("hidden");
-        });
-
-        document.getElementById("user-menu-button").addEventListener("click", function (e) {
-            e.stopPropagation();
-            document.getElementById("user-menu").classList.toggle("hidden");
-        });
-
-        window.addEventListener("click", function () {
-            document.getElementById("user-menu").classList.add("hidden");
-        });
-    </script>
+    
 </body>
 </html>

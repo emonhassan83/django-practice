@@ -1,5 +1,6 @@
 from django.urls import path
 from users.views import sign_up, sign_in, sign_out, activate_user, admin_dashboard, assign_role, create_group
+from core.views import no_permission
 
 urlpatterns = [
     path("sign-up", sign_up, name='sign-up'),
@@ -9,4 +10,5 @@ urlpatterns = [
     path("admin-dashboard", admin_dashboard, name='admin-dashboard'),
     path("assign-role/<int:user_id>/", assign_role, name='assign-role'),
     path("create-group", create_group, name='create-group'),
+    path("no-permission", no_permission, name='no-permission'),
 ]

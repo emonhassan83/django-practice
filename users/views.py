@@ -4,7 +4,11 @@ from django.contrib.auth.models import User, Group
 from django.contrib import messages
 from users.form import CustomSignUpForm, SignInForm, AssignRoleForm, CreateGroupForm
 from django.contrib.auth.tokens import default_token_generator
+from django.contrib.auth.decorators import login_required, user_passes_test
 
+# Test User
+def is_admin(user):
+    return user.is_authenticated and (user.is_superuser or user.groups.filter(name='Admin').exists())
 
 def sign_up(request):
     if request.method == "POST":
@@ -25,17 +29,31 @@ def sign_up(request):
 
 
 def sign_in(request):
+    if request.user.is_authenticated:
+        return redirect("dashboard")
+
     if request.method == "POST":
         form = SignInForm(request, data=request.POST)
         if form.is_valid():
-            login(request, form.get_user())
-            return redirect("home")
+            user = form.get_user()
+            login(request, user)
+
+            next_url = request.GET.get("next") or request.POST.get("next")
+            if next_url:
+                return redirect(next_url)
+
+            if user.is_superuser or user.groups.filter(name="Admin").exists():
+                return redirect("admin-dashboard")
+            elif user.groups.filter(name="Manager").exists():
+                return redirect("manager_dashboard")
+            else:
+                return redirect("user_dashboard")
     else:
         form = SignInForm(request)
 
     return render(request, "signin/signin.html", {"form": form})
 
-
+@login_required
 def sign_out(request):
     if request.method == "POST":
         logout(request)
@@ -55,6 +73,7 @@ def activate_user(request, user_id, token):
     except User.DoseNotExist:
         return HttpResponse("User not found")
 
+@user_passes_test(is_admin, login_url="no-permission")
 def admin_dashboard(request):
     users = User.objects.prefetch_related("groups").order_by("id")
     groups = Group.objects.prefetch_related("permissions", "user_set").order_by("name")
@@ -64,6 +83,7 @@ def admin_dashboard(request):
         {"users": users, "groups": groups},
     )
 
+@user_passes_test(is_admin, login_url="no-permission")
 def assign_role(request, user_id):
     target_user = get_object_or_404(User, id=user_id)
 
@@ -84,7 +104,7 @@ def assign_role(request, user_id):
         {"form": form, "target_user": target_user},
     )
 
-
+@user_passes_test(is_admin, login_url="no-permission")
 def create_group(request):
     if request.method == "POST":
         form = CreateGroupForm(request.POST)
